@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.21.0",
     "@neondatabase/serverless": "^1.0.1",
     "drizzle-orm": "^0.44.2",
     "next": "15.3.3",
