@@ -19,26 +19,37 @@ export async function POST(req: NextRequest) {
     if ('email_addresses' in evt.data && Array.isArray((evt.data as any).email_addresses)) {
       email = (evt.data as any).email_addresses.find((email: any) => email.id === primary_email_address_id)?.email_address;
     }
-
+    let res = null;
     switch (eventType) {
       case 'user.created':
 
-        await addUser({
+        res = await addUser({
           clerkUserId,
           email,
           fullName
         }) // Will return [user, error] where user is the newly created user object and error is null if successful, or an error object if there was an issue. and user is a array of the newly created user object 
 
+        if (res[1])
+          return new Response('Error adding user', { status: 500 })
+
         break;
       case 'user.updated':
-        await updateUser(clerkUserId, {
+        res = await updateUser(clerkUserId, {
           fullName,
           email,
           updatedAt: new Date()
         })
+
+        if (res[1])
+          return new Response('Error updating user', { status: 500 })
+
         break;
       case 'user.deleted':
-        await deleteUser(evt.data.id as string) // Will return [success, error] where success is a boolean indicating whether the deletion was successful and error is null if successful, or an error object if there was an issue.
+        res = await deleteUser(evt.data.id as string) // Will return [success, error] where success is a boolean indicating whether the deletion was successful and error is null if successful, or an error object if there was an issue.
+
+        if (res[1])
+          return new Response('Error deleting user', { status: 500 })
+
         break;
       default:
         console.log('Unhandled event type:', eventType);
@@ -46,7 +57,6 @@ export async function POST(req: NextRequest) {
 
     return new Response('Webhook received', { status: 200 })
   } catch (err) {
-    // console.error('Error verifying webhook:', err)
-    return new Response('Error verifying webhook', { status: 400 })
+    return new Response('Error verifying webhook or handing event', { status: 500 })
   }
 }

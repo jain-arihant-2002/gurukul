@@ -7,7 +7,7 @@ function Navbar(): React.JSX.Element {
         <>
             <header className='flex justify-between items-center'>
                 <div className="flex items-center justify-start p-4 h-16 gap-10">
-                    <img className='w-[150px] h-[150px]' src="/logo.svg" alt="Logo" />
+                    <img className='w-[150px] self-center' src="/logo.svg" alt="Logo" />
 
                     <div className="hidden md:flex items-center gap-9 ">
                         <Link className="text-white text-sm font-medium leading-normal hover:text-gray-300" href="#">Home</Link>
@@ -22,7 +22,7 @@ function Navbar(): React.JSX.Element {
                     <input
                         placeholder="Search"
                         className="hidden xl:block max-w-xs w-full flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-secondary-600 focus:border-none h-10 placeholder:text-secondary-200 px-4 text-base font-normal leading-normal"
-                        value=""
+                    // value=""
                     />
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -31,14 +31,15 @@ function Navbar(): React.JSX.Element {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        className="search-icon xl:hidden self-center hover:cursor-pointer" //Optional: add a class for specific styling 
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="search-icon xl:hidden self-center hover:cursor-pointer" //Optional: add a class for specific styling
                     >
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
+
                     <SignedOut>
                         <SignInButton mode="modal">
                             <button className="px-4 py-2 bg-primary-600 text-primary-foreground rounded-md font-semibold cursor-pointer hover:bg-primary-700 hover:text-white transition-colors">
@@ -47,7 +48,7 @@ function Navbar(): React.JSX.Element {
                         </SignInButton>
 
                         <SignUpButton mode="modal">
-                            <button className="hidden md:block px-4 py-2 bg-secondary-600 text-secondary-foreground rounded-md cursor-pointer hover:bg-secondary-700 transition-colors">
+                            <button className="hidden md:block px-4 py-2 bg-secondary-600 text-secondary-foreground rounded-md cursor-pointer text-white hover:bg-secondary-700  transition-colors">
                                 Sign Up
                             </button>
                         </SignUpButton>

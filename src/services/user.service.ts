@@ -42,7 +42,7 @@ export const deleteUser = async (clerkUserId: string) => {
 
   try {
     const deletedUser = await db.delete(usersTable).where(eq(usersTable.clerkUserId, clerkUserId)).returning();
-    return deletedUser.length > 0;
+    return [deletedUser.length > 0, null];
   } catch (error: any) {
     return [null, new Error('An unexpected error occurred while deleting user.')];
   }

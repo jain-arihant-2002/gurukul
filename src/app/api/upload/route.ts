@@ -1,0 +1,47 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { uploadImage, uploadVideo } from '@/utils/cloudinary';
+
+
+export async function POST(request: NextRequest) {
+
+
+    try {
+        const formData = await request.formData();
+        const file = formData.get("file") as File | null;
+        console.log("File received:", file);
+
+        if (!file) {
+            return NextResponse.json({ error: "File not found" }, { status: 400 })
+        }
+
+        const fileType = file.type.startsWith("video/") ? "video" : "image";
+
+        switch (fileType) {
+            case 'video': {
+                const [result, error] = await uploadVideo(file);
+                if (error) {
+                    return NextResponse.json({ error: error }, { status: 500 })
+                }
+                return NextResponse.json({ publicId: result, }, { status: 200 });
+            }
+        
+            case "image": {
+
+                const [result, error] = await uploadImage(file);
+                if (error) {
+                    return NextResponse.json({ error: error }, { status: 500 })
+                }
+
+            return NextResponse.json({ publicId: result, }, { status: 200 })
+        }
+            default: {
+            return NextResponse.json({ error: "Unsupported file type" }, { status: 400 })
+        }
+    }
+
+    } catch (error) {
+    console.log("Upload image failed", error)
+    return NextResponse.json({ error: "Upload image failed" }, { status: 500 })
+}
+
+}
