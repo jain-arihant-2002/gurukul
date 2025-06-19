@@ -28,7 +28,6 @@ export const addUser = async (userData: {
       return [null, new Error('User data is incomplete.')];
 
     // Handle other database errors
-    console.error('Error adding user:', error);
     return [null, new Error('An unexpected error occurred while adding user.')];
   }
 };
@@ -39,7 +38,7 @@ export const addUser = async (userData: {
  * @returns A boolean indicating whether the deletion was successful.
  */
 export const deleteUser = async (clerkUserId: string) => {
-
+  // Here we are only removing the user from the database, not all the related data.
   try {
     const deletedUser = await db.delete(usersTable).where(eq(usersTable.clerkUserId, clerkUserId)).returning();
     return [deletedUser.length > 0, null];
@@ -65,7 +64,48 @@ export const updateUser = async (clerkUserId: string, userData: Partial<{
       .returning();
     return [updatedUser, null];
   } catch (error: any) {
-    console.error('Error updating user:', error);
     return [null, new Error('An unexpected error occurred while updating user.')];
+  }
+};
+
+export const getUserByClerkId = async (clerkUserId: string) => {
+  try {
+    const user = await db.select().from(usersTable).where(eq(usersTable.clerkUserId, clerkUserId)).limit(1);
+    if (user.length === 0) {
+      return [null, new Error('User not found')];
+    }
+    return [user[0], null];
+  } catch (error: any) {
+    return [null, new Error('An unexpected error occurred while fetching user by Clerk ID.')];
+  }
+};
+
+export const getAllUsers = async () => {
+  try {
+    const users = await db.select().from(usersTable);
+    return [users, null];
+  } catch (error: any) {
+    return [null, new Error('An unexpected error occurred while fetching all users.')];
+  }
+};
+
+export const getUsersByRole = async (role: LmsRole) => {
+  try {
+    const users = await db.select().from(usersTable).where(eq(usersTable.lmsRole, role));
+    return [users, null];
+  } catch (error: any) {
+    return [null, new Error('An unexpected error occurred while fetching users by role.')];
+  }
+};
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    const user = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
+    if (user.length === 0)
+      return [null, new Error('User not found')];
+
+    return [user[0], null];
+  } catch (error: any) {
+    return [null, new Error('An unexpected error occurred while fetching user by email.')];
   }
 };

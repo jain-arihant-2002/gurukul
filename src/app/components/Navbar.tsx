@@ -1,8 +1,10 @@
 import { SignedIn, UserButton, SignedOut, SignInButton, SignUpButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import React from 'react'
+import RegisterTeacher from './RegisterTeacher'
 
 function Navbar(): React.JSX.Element {
+
     return (
         <>
             <header className='flex justify-between items-center'>
@@ -39,7 +41,7 @@ function Navbar(): React.JSX.Element {
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-
+                    {/* <RegisterTeacher /> */}
                     <SignedOut>
                         <SignInButton mode="modal">
                             <button className="px-4 py-2 bg-primary-600 text-primary-foreground rounded-md font-semibold cursor-pointer hover:bg-primary-700 hover:text-white transition-colors">

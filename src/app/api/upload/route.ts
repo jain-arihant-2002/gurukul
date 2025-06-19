@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadImage, uploadVideo } from '@/utils/cloudinary';
+import { isAuthorized } from '@/utils/requiredRole';
 
 
 export async function POST(request: NextRequest) {
+    const allowed = await isAuthorized(['INSTRUCTOR', 'ADMIN']);
 
+    if (!allowed) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     try {
         const formData = await request.formData();
@@ -15,7 +20,7 @@ export async function POST(request: NextRequest) {
         }
 
         const fileType = file.type.startsWith("video/") ? "video" : "image";
-
+        // add result url to database
         switch (fileType) {
             case 'video': {
                 const [result, error] = await uploadVideo(file);
@@ -24,24 +29,25 @@ export async function POST(request: NextRequest) {
                 }
                 return NextResponse.json({ publicId: result, }, { status: 200 });
             }
-        
+
             case "image": {
 
                 const [result, error] = await uploadImage(file);
+
                 if (error) {
                     return NextResponse.json({ error: error }, { status: 500 })
                 }
 
-            return NextResponse.json({ publicId: result, }, { status: 200 })
-        }
+                return NextResponse.json({ publicId: result, }, { status: 200 })
+            }
             default: {
-            return NextResponse.json({ error: "Unsupported file type" }, { status: 400 })
+                return NextResponse.json({ error: "Unsupported file type" }, { status: 400 })
+            }
         }
-    }
 
     } catch (error) {
-    console.log("Upload image failed", error)
-    return NextResponse.json({ error: "Upload image failed" }, { status: 500 })
-}
+        console.log("Upload image failed", error)
+        return NextResponse.json({ error: "Upload image failed" }, { status: 500 })
+    }
 
 }

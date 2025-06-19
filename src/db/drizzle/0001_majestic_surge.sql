@@ -1,0 +1,1 @@
+ALTER TYPE "public"."lesson_content_type" ADD VALUE 'IMAGE';

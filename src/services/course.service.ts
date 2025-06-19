@@ -1,0 +1,178 @@
+import { db } from '@/db';
+import { coursesTable, enrollmentsTable, lessonsTable, sectionsTable } from '@/db/schema';
+import { asc, eq } from 'drizzle-orm';
+
+
+/*
+This function retrieves all courses from the courses table in the database.
+*/
+export async function getAllCourses() {
+    try {
+        const courses = await db.select().from(coursesTable);
+        return [courses, null];
+    }
+    catch (error: any) {
+        return [null, new Error('An unexpected error occurred while fetching courses.')];
+    }
+}
+
+/*
+This function takes an instructor ID and return all courses associated with that instructor.
+*/
+export async function getCoursesByInstructorId(instructorId: string) {
+    try {
+        const courses = await db
+            .select()
+            .from(coursesTable)
+            .where(eq(coursesTable.instructorClerkId, instructorId))
+            .execute();
+        return [courses, null];
+    } catch (error: any) {
+        return [null, new Error('An unexpected error occurred while fetching courses by instructor ID.')];
+    }
+}
+
+/*
+This function takes a User ID and returns the course associated with that User.
+*/
+export async function getEnrolledCoursesByUserId(userId: string) {
+    try {
+        const enrolledCourses = await db
+            .select({
+                courseId: coursesTable.id,
+                title: coursesTable.title,
+                slug: coursesTable.slug,
+                description: coursesTable.description,
+                coverImageUrl: coursesTable.coverImageUrl,
+                price: coursesTable.price,
+                currency: coursesTable.currency,
+                enrolledAt: enrollmentsTable.enrolledAt,
+                instructorClerkId: coursesTable.instructorClerkId
+            })
+            .from(enrollmentsTable)
+            .innerJoin(
+                coursesTable,
+                eq(enrollmentsTable.courseId, coursesTable.id)
+            )
+            .where(eq(enrollmentsTable.userClerkId, userId));
+
+        return [enrolledCourses, null];
+    } catch (error) {
+        return [null, new Error('An unexpected error occurred while fetching course by user ID.')];
+    }
+
+}
+
+/*
+This function returns all sections of a course  and all lessons within each section.
+It takes a course ID as an argument.
+*/
+export async function getCourseSectionsAndLessons(courseId: string) {
+    try {
+        // First, get all sections for the course ordered by their index
+        const sections = await db
+            .select()
+            .from(sectionsTable)
+            .where(eq(sectionsTable.courseId, courseId))
+            .orderBy(asc(sectionsTable.orderIndex));
+
+        // For each section, get its lessons
+        const sectionsWithLessons = await Promise.all(
+            sections.map(async (section) => {
+                const lessons = await db
+                    .select()
+                    .from(lessonsTable)
+                    .where(eq(lessonsTable.sectionId, section.id))
+                    .orderBy(asc(lessonsTable.orderIndex));
+
+                return {
+                    ...section,
+                    lessons
+                };
+            })
+        );
+
+        return [sectionsWithLessons, null];
+    } catch (error: any) {
+        console.error('Error fetching course sections and lessons:', error);
+        return [null, new Error('An unexpected error occurred while fetching course sections and lessons.')];
+    }
+}
+
+/* Add Course in database */
+export async function addCourse(courseData: {
+    instructorClerkId: string
+    title: string
+    slug: string
+    description: string
+    coverImageUrl: string
+    price: string
+    currency: string
+    status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
+}) {
+    try {
+        const course = await db.insert(coursesTable).values(courseData).returning();
+        return [course, null];
+    } catch (error: any) {
+        return [null, new Error('An unexpected error occurred while adding the course.')];
+    }
+}
+
+/* Add Section in a Course */
+export async function addSectionInCourse(sectionData: {
+    courseId: string
+    title: string
+    orderIndex: number
+}) {
+    try {
+        const section = await db.insert(sectionsTable).values(sectionData).returning();
+        return [section, null];
+    } catch (error: any) {
+        return [null, new Error('An unexpected error occurred while adding the section.')];
+    }
+}
+
+/* Add Lesson in a Section */
+export async function addLessonInSection(lessonData: {
+    sectionId: string
+    title: string
+    contentType: 'TEXT' | 'VIDEO' | 'IMAGE'
+    textContent: string
+    videoProviderId: string
+    videoPlaybackId: string
+    videoDurationSeconds: number
+    orderIndex: number
+    isPreviewAllowed: boolean
+}) {
+    try {
+        const lesson = await db.insert(lessonsTable).values(lessonData).returning();
+        return [lesson, null];
+    } catch (error: any) {
+        return [null, new Error('An unexpected error occurred while adding the lesson.')];
+    }
+}
+
+/*
+getAllCourses
+getCoursesByInstructorId
+getEnrolledCoursesByUserId
+getCourseSectionsAndLessons
+
+add course                                    [X]
+add section in course                         [X]
+add lesson in section                         [X]
+delete course
+delete section in course
+delete lesson in section
+update course
+update section in course
+update lesson in section
+get course by id
+get section by id
+get lesson by id
+get all courses by instructor id
+get all sections by course id
+get all lessons by section id
+get all courses by user id                   [X]
+get all sections and lessons by course id    [X]
+*/

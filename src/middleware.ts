@@ -1,7 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)','/sign-up(.*)','/','/api/auth/clerk-webhook(.*)','/api/test']);
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)','/sign-up(.*)','/','/api/auth/clerk-webhook(.*)',
+// Just for testing purposes, remove in production
+    '/api/test'
+]);
 
 
 export default clerkMiddleware(async (auth, req) => {
@@ -9,6 +12,7 @@ export default clerkMiddleware(async (auth, req) => {
         await auth.protect()
     }
 })
+
 
 export const config = {
     matcher: [

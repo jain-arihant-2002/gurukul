@@ -20,7 +20,7 @@ import { relations, sql } from 'drizzle-orm';
 
 export const lmsUserRoleEnum = pgEnum('lms_user_role', ['STUDENT', 'INSTRUCTOR', 'ADMIN']);
 export const courseStatusEnum = pgEnum('course_status', ['DRAFT', 'PUBLISHED', 'ARCHIVED']);
-export const lessonContentTypeEnum = pgEnum('lesson_content_type', ['TEXT', 'VIDEO']);
+export const lessonContentTypeEnum = pgEnum('lesson_content_type', ['TEXT', 'VIDEO','IMAGE']);
 export const paymentStatusEnum = pgEnum('payment_status', ['CREATED', 'AUTHORIZED', 'CAPTURED', 'FAILED', 'REFUNDED']);
 
 // --- TABLES ---
