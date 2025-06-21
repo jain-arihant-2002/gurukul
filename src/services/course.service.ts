@@ -12,7 +12,7 @@ export async function getAllCourses() {
         return [courses, null];
     }
     catch (error: any) {
-        return [null, new Error('An unexpected error occurred while fetching courses.')];
+        return [null, { message: 'An unexpected error occurred while fetching courses.', error }];
     }
 }
 
@@ -28,7 +28,7 @@ export async function getCoursesByInstructorId(instructorId: string) {
             .execute();
         return [courses, null];
     } catch (error: any) {
-        return [null, new Error('An unexpected error occurred while fetching courses by instructor ID.')];
+        return [null, { message: 'An unexpected error occurred while fetching courses by instructor ID.', error }];
     }
 }
 
@@ -57,8 +57,8 @@ export async function getEnrolledCoursesByUserId(userId: string) {
             .where(eq(enrollmentsTable.userClerkId, userId));
 
         return [enrolledCourses, null];
-    } catch (error) {
-        return [null, new Error('An unexpected error occurred while fetching course by user ID.')];
+    } catch (error: any) {
+        return [null, { message: 'An unexpected error occurred while fetching course by user ID.', error }];
     }
 
 }
@@ -94,8 +94,7 @@ export async function getCourseSectionsAndLessons(courseId: string) {
 
         return [sectionsWithLessons, null];
     } catch (error: any) {
-        console.error('Error fetching course sections and lessons:', error);
-        return [null, new Error('An unexpected error occurred while fetching course sections and lessons.')];
+        return [null, { message: 'An unexpected error occurred while fetching course sections and lessons.', error }];
     }
 }
 
@@ -114,7 +113,10 @@ export async function addCourse(courseData: {
         const course = await db.insert(coursesTable).values(courseData).returning();
         return [course, null];
     } catch (error: any) {
-        return [null, new Error('An unexpected error occurred while adding the course.')];
+        if (error.code === '23505')  // Unique violation error code
+            return [null, { message: 'A course with this Title already exists. Please choose a different title.', error }];
+
+        return [null, { message: 'An unexpected error occurred while adding the course.', error }];
     }
 }
 
@@ -128,7 +130,7 @@ export async function addSectionInCourse(sectionData: {
         const section = await db.insert(sectionsTable).values(sectionData).returning();
         return [section, null];
     } catch (error: any) {
-        return [null, new Error('An unexpected error occurred while adding the section.')];
+        return [null, { message: 'An unexpected error occurred while adding the section.', error }];
     }
 }
 
@@ -148,7 +150,7 @@ export async function addLessonInSection(lessonData: {
         const lesson = await db.insert(lessonsTable).values(lessonData).returning();
         return [lesson, null];
     } catch (error: any) {
-        return [null, new Error('An unexpected error occurred while adding the lesson.')];
+        return [null, { message: 'An unexpected error occurred while adding the lesson.', error }];
     }
 }
 

@@ -1,5 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { v2 as cloudinary } from "cloudinary";
+import { isAuthorized } from "./requiredRole";
+import { CloudinaryUploadResult } from "@/utils/types";
 
 // Configuration
 cloudinary.config({
@@ -8,10 +10,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET // Click 'View Credentials' below to copy your API secret
 });
 
-interface CloudinaryUploadResult {
-    public_id: string;
-    [key: string]: any
-}
+
 
 export const uploadImage = async (file: File) => {
     try {
@@ -20,6 +19,12 @@ export const uploadImage = async (file: File) => {
         if (!userId) {
             return [null, new Error("Unauthorized")]
         }
+
+        const allowed = await isAuthorized(['INSTRUCTOR', 'ADMIN']);
+
+        if (!allowed)
+            return [null, new Error("Unauthorized")]
+
         const id = userId.split("_")[1]; // Extract the user ID from the Clerk user ID format
 
         if (
@@ -30,6 +35,9 @@ export const uploadImage = async (file: File) => {
             return [null, new Error("Cloudinary configuration is missing")];
         }
 
+        if (!file || !(file instanceof File)) {
+            return [null, new Error("Invalid file")];
+        }
 
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
@@ -60,6 +68,12 @@ export const uploadVideo = async (file: File) => {
         if (!userId) {
             return [null, new Error("Unauthorized")]
         }
+
+        const allowed = await isAuthorized(['INSTRUCTOR', 'ADMIN']);
+
+        if (!allowed)
+            return [null, new Error("Unauthorized")]
+
         const id = userId.split("_")[1]; // Extract the user ID from the Clerk user ID format
 
 
@@ -101,6 +115,11 @@ export const uploadVideo = async (file: File) => {
 
 export const deleteMediaFromCloudinary = async (publicId: string) => {
     try {
+        const allowed = await isAuthorized(['INSTRUCTOR', 'ADMIN']);
+
+        if (!allowed)
+            return [null, new Error("Unauthorized")]
+
         await cloudinary.uploader.destroy(publicId);
         return ['Success', null];
     } catch (error) {
@@ -110,6 +129,11 @@ export const deleteMediaFromCloudinary = async (publicId: string) => {
 
 export const deleteVideoFromCloudinary = async (publicId: string) => {
     try {
+        const allowed = await isAuthorized(['INSTRUCTOR', 'ADMIN']);
+
+        if (!allowed)
+            return [null, new Error("Unauthorized")]
+
         await cloudinary.uploader.destroy(publicId, { resource_type: "video" });
         return ['Success', null];
     } catch (error) {

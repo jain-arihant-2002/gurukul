@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "./components/Navbar";
+import UserRoleSyncer from "./components/UserRoleSyncer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClerkProvider>
+          
+          {/* Sync user role with Zustand or context */}
+          {/* This component will fetch the user role and update the store */}
+          <UserRoleSyncer />
+
           <Navbar />
           {children}
         </ClerkProvider>

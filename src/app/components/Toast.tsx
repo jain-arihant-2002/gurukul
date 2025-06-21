@@ -30,7 +30,7 @@ export default function Toast({ message, type, isVisible }: { message: string; t
 
     return (
         <div
-            className={`fixed top-4 right-4 p-4 rounded shadow-md ${type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            className={`fixed z-50 top-4 right-4 p-4 rounded shadow-md ${type === 'success' ? 'bg-green-500' : 'bg-red-500'
                 } text-white transition-opacity duration-1000 ease-in-out ${render ? 'opacity-100' : 'opacity-0'
                 }`}
         >

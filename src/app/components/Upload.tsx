@@ -14,12 +14,10 @@ export default function Upload({ type = "image" }: { type?: "image" | "video" })
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const file = formData.get("file") as File | null;
-
     if (!file) {
-      console.error("No file selected");
       return;
     }
-    console.log("Selected file:", file);
+   
     //check if the file is an image or video
 
     if (type === "image" && !file.type.startsWith("image/")) {
@@ -35,7 +33,7 @@ export default function Upload({ type = "image" }: { type?: "image" | "video" })
       // Show toast for 3 seconds
       setTimeout(() => setIsToastVisible(false), 3000);
 
-      console.error("Selected file is not a video");
+      
       return;
     }
     try {
@@ -49,9 +47,9 @@ export default function Upload({ type = "image" }: { type?: "image" | "video" })
       }
 
       const data = await response.json();
-      console.log('Upload successful:', data);
+      //console.log(data);
     } catch (error) {
-      console.error('Error uploading file:', error);
+      
     }
   }
   return (<form encType='multipart/form-data' onSubmit={handleSubmit} action="" >

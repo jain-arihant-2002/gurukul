@@ -14,7 +14,7 @@
   --primary-700: #176e6c;
   --primary-800: #175858;
   --primary-900: #184949;
-  --primary-950: #072b2c;
+  --primary-950: #1a2e2c;
   
   --primary-foreground: hsl(175, 32%, 15%);
      
@@ -28,7 +28,6 @@
   --secondary-800: hsl(177, 21%, 10%);
   --secondary-foreground: hsl(0, 0%, 100%); 
  
-  --secondary-foreground: #212121; 
 }
 
 .dark {}

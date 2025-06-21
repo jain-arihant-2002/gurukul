@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ error: "Unsupported media type" }, { status: 400 });
         }
     } catch (error) {
-        console.error("Error deleting media:", error);
+        
         return NextResponse.json({ error: "Failed to delete media" }, { status: 500 });
     }
 }
