@@ -18,23 +18,25 @@ export async function createCourse(data: any) {
 
     let coverImageUrl: string = '';
     console.log("Cover Image URL:", coverImage);
-    // if (coverImage) {
-    //     const [publicId, error] = await uploadImage(coverImage);
-    //     if (error || typeof publicId !== "string") {
-    //         return { error };
-    //     }
-    //     console.log("Cover Image Public ID:", publicId);
-    //     coverImageUrl = publicId;
-    // }
+    if (coverImage) {
+        const [publicId, error] = await uploadImage(coverImage);
+        if (error || typeof publicId !== "string") {
+            return { error };
+        }
+        console.log("Cover Image Public ID:", publicId);
+        coverImageUrl = publicId;
+    }
     const courseData = {
         instructorClerkId: userId,
         title: data.title as string,
         slug: slug as string,
         description: data.description as string,
-        coverImageUrl: coverImageUrl as string || '',
+        detailDescription: data.detailDescription as string || "",
+        categories: data.categories ? (data.categories as string).split(',').map((cat: string) => cat.trim()).join(',') : null,
+        coverImageUrl: coverImageUrl as string,
         price: (data.price as string) || "0",
         currency: (data?.currency as string) || 'INR',
-        status: data?.status as "DRAFT" | "PUBLISHED" | "ARCHIVED",
+        status: data.status as "DRAFT" | "PUBLISHED" | "ARCHIVED" ||"DRAFT",
     }
     if (!courseData)
         return { success: false, error: "Invalid form data" };

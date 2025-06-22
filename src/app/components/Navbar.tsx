@@ -1,4 +1,6 @@
+import { PrimaryButton, SecondaryButton } from '@/utils/commonClasses'
 import { SignedIn, UserButton, SignedOut, SignInButton, SignUpButton } from '@clerk/nextjs'
+import { Search } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -27,30 +29,20 @@ function Navbar(): React.JSX.Element {
                         className="hidden xl:block max-w-xs w-full flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-secondary-600 focus:border-none h-10 placeholder:text-secondary-200 px-4 text-base font-normal leading-normal"
                     // value=""
                     />
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="search-icon xl:hidden self-center hover:cursor-pointer" //Optional: add a class for specific styling
+                    <div className="search-icon xl:hidden self-center hover:cursor-pointer" //Optional: add a class for specific styling
                     >
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+                        <Search />
+
+                    </div>
                     <SignedOut>
                         <SignInButton mode="modal">
-                            <button className="px-4 py-2 bg-primary-600 text-primary-foreground rounded-md font-semibold cursor-pointer hover:bg-primary-700 hover:text-white transition-colors">
+                            <button className={PrimaryButton}>
                                 Log In
                             </button>
                         </SignInButton>
 
                         <SignUpButton mode="modal">
-                            <button className="hidden md:block px-4 py-2 bg-secondary-600 text-secondary-foreground rounded-md cursor-pointer hover:bg-secondary-700 transition-colors">
+                            <button className={SecondaryButton}>
                                 Sign Up
                             </button>
                         </SignUpButton>

@@ -15,6 +15,20 @@
       "when": 1750262562707,
       "tag": "0001_majestic_surge",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750578702140,
+      "tag": "0002_strange_vulcan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1750595208915,
+      "tag": "0003_curious_demogoblin",
+      "breakpoints": true
     }
   ]
 }

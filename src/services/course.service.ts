@@ -1,12 +1,13 @@
 import { db } from '@/db';
-import { coursesTable, enrollmentsTable, lessonsTable, sectionsTable } from '@/db/schema';
+import { coursesTable, enrollmentsTable, lessonsTable, sectionsTable, usersTable } from '@/db/schema';
+import { Course, EnrolledCourse, ServiceError } from '@/utils/types';
 import { asc, eq } from 'drizzle-orm';
 
 
 /*
 This function retrieves all courses from the courses table in the database.
 */
-export async function getAllCourses() {
+export async function getAllCourses(): Promise<[Course[] | null, ServiceError | null]> {
     try {
         const courses = await db.select().from(coursesTable);
         return [courses, null];
@@ -16,10 +17,38 @@ export async function getAllCourses() {
     }
 }
 
+export const getAllCoursesWithInstructor = async (): Promise<[Course[] | null, ServiceError | null]> => {
+    try {
+        const courses = await db
+            .select({
+                id: coursesTable.id,
+                title: coursesTable.title,
+                slug: coursesTable.slug,
+                description: coursesTable.description,
+                coverImageUrl: coursesTable.coverImageUrl,
+                price: coursesTable.price,
+                currency: coursesTable.currency,
+                instructorClerkId: coursesTable.instructorClerkId,
+                instructorName: usersTable.fullName,
+                status: coursesTable.status,
+                detailDescription: coursesTable.detailDescription,
+                categories: coursesTable.categories,
+            })
+            .from(coursesTable).innerJoin(
+                usersTable,
+                eq(coursesTable.instructorClerkId, usersTable.clerkUserId)
+            ).where(
+                eq(coursesTable.status, 'PUBLISHED')
+            );
+        return [courses, null];
+    } catch (error: any) {
+        return [null, { message: 'An unexpected error occurred while fetching courses with instructor.', error }];
+    }
+}
 /*
 This function takes an instructor ID and return all courses associated with that instructor.
 */
-export async function getCoursesByInstructorId(instructorId: string) {
+export async function getCoursesByInstructorId(instructorId: string): Promise<[Course[] | null, ServiceError | null]> {
     try {
         const courses = await db
             .select()
@@ -35,7 +64,7 @@ export async function getCoursesByInstructorId(instructorId: string) {
 /*
 This function takes a User ID and returns the course associated with that User.
 */
-export async function getEnrolledCoursesByUserId(userId: string) {
+export async function getEnrolledCoursesByUserId(userId: string): Promise<[EnrolledCourse[] | null, ServiceError | null]> {
     try {
         const enrolledCourses = await db
             .select({
@@ -43,6 +72,7 @@ export async function getEnrolledCoursesByUserId(userId: string) {
                 title: coursesTable.title,
                 slug: coursesTable.slug,
                 description: coursesTable.description,
+                detailDescription: coursesTable.detailDescription,
                 coverImageUrl: coursesTable.coverImageUrl,
                 price: coursesTable.price,
                 currency: coursesTable.currency,
@@ -99,16 +129,7 @@ export async function getCourseSectionsAndLessons(courseId: string) {
 }
 
 /* Add Course in database */
-export async function addCourse(courseData: {
-    instructorClerkId: string
-    title: string
-    slug: string
-    description: string
-    coverImageUrl: string
-    price: string
-    currency: string
-    status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
-}) {
+export async function addCourse(courseData: Omit<Course, 'id'>): Promise<[Course[] | null, ServiceError | null]> {
     try {
         const course = await db.insert(coursesTable).values(courseData).returning();
         return [course, null];

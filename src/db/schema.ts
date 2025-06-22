@@ -48,10 +48,12 @@ export const coursesTable = pgTable('courses', {
   title: varchar('title', { length: 255 }).notNull(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   description: text('description'),
+  detailDescription: text('detail_description'), // Longer description for course details page
   coverImageUrl: varchar('cover_image_url', { length: 1024 }),
   price: decimal('price', { precision: 10, scale: 2 }).notNull().default('0.00'), // 0.00 for free courses
   currency: varchar('currency', { length: 3 }).notNull().default('INR'),
   status: courseStatusEnum('status').notNull().default('DRAFT'),
+  categories: text('categories'), // Comma-separated or JSON string of categories
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => {

@@ -64,7 +64,7 @@ export const updateUser = async (clerkUserId: string, userData: Partial<{
   }
 };
 
-export const getUserByClerkId = async (clerkUserId: string) => {
+export const getUserByClerkId = async (clerkUserId: string) : Promise<[User | null, ServiceError | null]> => {
   try {
     const user = await db.select().from(usersTable).where(eq(usersTable.clerkUserId, clerkUserId)).limit(1);
     if (user.length === 0) {
@@ -76,7 +76,7 @@ export const getUserByClerkId = async (clerkUserId: string) => {
   }
 };
 
-export const getAllUsers = async () => {
+export const getAllUsers = async () : Promise<[User[] | null, ServiceError | null]> => {
   try {
     const users = await db.select().from(usersTable);
     return [users, null];
@@ -85,7 +85,7 @@ export const getAllUsers = async () => {
   }
 };
 
-export const getUsersByRole = async (role: LmsRole) => {
+export const getUsersByRole = async (role: LmsRole) : Promise<[User[] | null, ServiceError | null]> => {
   try {
     const users = await db.select().from(usersTable).where(eq(usersTable.lmsRole, role));
     return [users, null];
@@ -94,7 +94,7 @@ export const getUsersByRole = async (role: LmsRole) => {
   }
 };
 
-export const getUserByEmail = async (email: string) => {
+export const getUserByEmail = async (email: string) : Promise<[User | null, ServiceError | null]> => {
   try {
     const user = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
     if (user.length === 0)

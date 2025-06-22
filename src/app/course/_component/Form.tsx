@@ -48,7 +48,7 @@ export default function Form({ page }: { page: 'create' | 'update' }) {
     return (
         <main>
             <Toast message={toast.message} type={toast.type} isVisible={toast.isVisible} />
-            <form className=' flex flex-col w-full md:w-[60%] mx-auto gap-5 p-4 text-white rounded mt-8' onSubmit={handleSubmit(onSubmit)}>
+            <form className=' flex flex-col gap-5 p-4 rounded mt-4' onSubmit={handleSubmit(onSubmit)}>
                 <label htmlFor="title">Course Title</label>
                 <input
                     type="text"
@@ -60,19 +60,29 @@ export default function Form({ page }: { page: 'create' | 'update' }) {
 
                 <label htmlFor="description">Course Description</label>
                 <textarea
-                    placeholder="Provide a detailed description of your course..."
+                    placeholder="Provide a short description of your course..."
                     className={inputClasses}
-                    {...register("description", { required: true, minLength: 20 })}
+                    {...register("description", { required: true, minLength: 60, maxLength: 200 })}
                 />
-                {errors.description && <span className={errorClasses}>Description is required (min 20 chars)</span>}
-
+                {errors.description && <span className={errorClasses}>Description is required (min 60 chars)</span>}
+{/* Todo: add rich text editor */}
                 <label htmlFor="price">Price</label>
                 <input
                     type="number"
                     placeholder="2999.00"
-                    className={inputClasses}
+                    className={inputClasses + ' [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'}
                     {...register("price", { required: true, valueAsNumber: true })}
+                    style={{ MozAppearance: 'textfield' }}
                 />
+
+                <label htmlFor="categories">Categories</label>
+                <input
+                    type="string"
+                    placeholder="web development, programming, design (Separate categories with commas)"
+                    className={inputClasses}
+                    {...register("categories", { required: true })}
+                />
+
                 {errors.price && <span className={errorClasses}>Price is required</span>}
                 {page === 'update' && <label htmlFor="status">Status</label>}
                 {page === 'update' && <select className={inputClasses} {...register("status", { required: true })}>
