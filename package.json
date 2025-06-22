@@ -12,6 +12,9 @@
   "dependencies": {
     "@clerk/nextjs": "^6.21.0",
     "@neondatabase/serverless": "^1.0.1",
+    "@tiptap/pm": "^2.22.3",
+    "@tiptap/react": "^2.22.3",
+    "@tiptap/starter-kit": "^2.22.3",
     "cloudinary": "^2.6.1",
     "drizzle-orm": "^0.44.2",
     "lucide-react": "^0.522.0",
@@ -23,6 +26,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

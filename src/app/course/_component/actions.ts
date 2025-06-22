@@ -23,7 +23,6 @@ export async function createCourse(data: any) {
         if (error || typeof publicId !== "string") {
             return { error };
         }
-        console.log("Cover Image Public ID:", publicId);
         coverImageUrl = publicId;
     }
     const courseData = {
